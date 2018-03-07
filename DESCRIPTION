@@ -1,11 +1,16 @@
 Package: installMultiDiff
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Quick Installation of multiDiff
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Dhruva Chandramohan
+Maintainer: Dhruva Chandramohan <dc1340@gmail.com>
+Description: Works with the methylKit package to call differential methylation
+    over multiple covariates with estimating and visualization of effect size.
+License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
+Depends: ggplot2,devtools,plyr,reshape2,methylKit,DSS,Matrix,pheatmap,scales,emdbook,dplyr
+    
+   
+
+
