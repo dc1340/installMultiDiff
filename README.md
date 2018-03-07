@@ -1,9 +1,13 @@
 # installMultiDiff
 Quick multiDiff installation. multiDiff is an R package designed to extend methyKit for use with multiple covariates. It implements the maximum difference estimate to allow the ability to assign biologically meaningful effect sizes in complex designs. 
 
+<<<<<<< HEAD
 methyKit, created by Dr. Altuna Akalin and Dr. Sheng Li, is on github [here](https://github.com/al2na/methylKit)
 
 # Features
+=======
+#Features
+>>>>>>> 653fe40b9c0a1bcf8f876e3d449a5940a9430df8
 
 * Calling and filtering sites
 * Visualizing and summarizing results
