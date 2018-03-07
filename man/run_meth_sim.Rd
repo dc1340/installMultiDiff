@@ -4,17 +4,19 @@
 \alias{run_meth_sim}
 \title{Run methylation simulation}
 \usage{
-run_meth_sim(sim_num_sites_per_cond = 1000, sim_read_depth = 10, seed = 1,
-  sim_control_region_size_multiplier = 1, sim_use_sawtooth_base = F,
-  sim_mean_beta = 3, sim_beta_multiplier = c(1, -1, -1),
-  sim_condition_noise = 0.01, sim_biological_noise = 0.01, run_DSS = T,
-  make_confusion_matrices = T, link_func = logit,
+run_meth_sim(sim_num_sites_per_cond = 1000, sim_read_depth = 10,
+  sim_num_samps = 4, seed = 1, sim_control_region_size_multiplier = 1,
+  sim_use_sawtooth_base = F, sim_mean_beta = 3, sim_beta_multiplier = c(1,
+  -1, -1), sim_condition_noise = 0.01, sim_biological_noise = 0.01,
+  run_DSS = T, make_confusion_matrices = T, link_func = logit,
   inv_link_func = inv_link_func, sim_cores = 4)
 }
 \arguments{
 \item{sim_num_sites_per_cond}{Number of sites per condition. Default=1000}
 
 \item{sim_read_depth}{Read depth- simulated uniformly. Default=10}
+
+\item{sim_num_samps}{Number of samples for each of the four biological conditions. Default=4}
 
 \item{seed}{Random seed. Default=1}
 
@@ -42,4 +44,6 @@ and their interaction term to have different strengths. Default =c(1,-1,-1).}
 }
 \description{
 Runs multivariate simulation of methylation for methylKit and DSS
+If both the DSS and confusion matrix flags are set to false,
+will return a standard multiDiff array. Otherwise will return a list of lists.
 }

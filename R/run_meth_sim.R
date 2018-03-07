@@ -3,9 +3,11 @@
 #' Runs multivariate simulation of methylation for methylKit and DSS
 #' If both the DSS and confusion matrix flags are set to false,
 #' will return a standard multiDiff array. Otherwise will return a list of lists.
+#' @param base_only Whether to generate multDiff and DSS call objects. Will only
+#'      return a methylBase object if set to true. Default=F
 #' @param sim_num_sites_per_cond Number of sites per condition. Default=1000
 #' @param sim_read_depth Read depth- simulated uniformly. Default=10
-#' @param sim_num_samps Number of samples for each of the four biological conditions. Default=4
+#' @param sim_num_samps_per_group Number of samples for each of the four biological conditions. Default=4
 #' @param seed Random seed. Default=1
 #' @param sim_control_region_size_multiplier Allows the control region to be larger to
 #'     simulate that most of the genome should not be differential. Default=1
@@ -19,8 +21,9 @@
 #' @param link_func The link function. Expects inputs in [0,1]. Defaults to logit.
 #' @param inv_link_func The inverse link function. Expected to output in [0,1], should be inverse of the link.
 #' @param sim_cores Number of cores to use in the simulation
-run_meth_sim <-function ( sim_num_sites_per_cond=1000, sim_read_depth=10,
-                          sim_num_samps=4, seed=1,
+#' @export
+run_meth_sim <-function ( base_only=F, sim_num_sites_per_cond=1000, sim_read_depth=10,
+                          sim_num_samps_per_group=4, seed=1,
               sim_control_region_size_multiplier=1,
               sim_use_sawtooth_base=F,
               sim_mean_beta=3, sim_beta_multiplier=c(1,-1,-1),
@@ -33,17 +36,20 @@ run_meth_sim <-function ( sim_num_sites_per_cond=1000, sim_read_depth=10,
 
   set.seed(seed)
 
+  sim_num_samps=sim_num_samps_per_group
   sim_bin_names=laply (0:7 , function(x) { paste0(as.character(as.integer(intToBits(x)))[ 1:3 ], collapse='') } )
 
-  sim_simp_design=data.frame(Cov1=c(rep(1,8), rep(0,8)) , Cov2=c(rep(c(rep(1,4), rep(0,4)), 2)))
+  sim_simp_design=data.frame(Cov1=c(rep(1,2*sim_num_samps_per_group),
+                                    rep(0,2*sim_num_samps_per_group)) ,
+                             Cov2=c(rep(c(rep(1,sim_num_samps_per_group), rep(0,sim_num_samps_per_group)), 2)))
 
   sim_simp_design$IsBoth=with(sim_simp_design, Cov1* Cov2)
 
-  sim_rev_design=-sim_simp_design+1
-  colnames(sim_rev_design)=c('NotCov1', 'NotCov2', 'Neither')
-  sim_rev_design$Neither=with(sim_rev_design, NotCov1 * NotCov2)
-
-  sim_mixed_design=cbind(sim_rev_design[ , c(1,2)], sim_simp_design[  , 3])
+  # sim_rev_design=-sim_simp_design+1
+  # colnames(sim_rev_design)=c('NotCov1', 'NotCov2', 'Neither')
+  # sim_rev_design$Neither=with(sim_rev_design, NotCov1 * NotCov2)
+  #
+  # sim_mixed_design=cbind(sim_rev_design[ , c(1,2)], sim_simp_design[  , 3])
 
   sim_possible_site_states=unique(sim_simp_design)
   #sim_possible_site_states
@@ -186,6 +192,9 @@ run_meth_sim <-function ( sim_num_sites_per_cond=1000, sim_read_depth=10,
                     destranded=T,
                     resolution='base')
 
+  if (base_only){
+    return(sim_meth_base)
+  }
 
   ### Calculate differential methylation ####
   # sim_diff=cem.calculateMultiDiffMeth(sim_meth_base, sim_diff_design, paste(colnames(sim_diff_design), collapse = '+') , num.cores = sim_cores);
