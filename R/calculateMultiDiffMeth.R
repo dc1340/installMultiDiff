@@ -1,17 +1,16 @@
-#' Calculates the multiDiff Object
+#' Calculate the multiDiff Object
+#'
 #' This function calculates differential methylation for multiple covariates
-#' from a methylBase object, and returns a multiDiff array.
+#' from a methylBase object, and an associated array and design formula, and returns a multiDiff array.
 #' @param meth methBase object
 #' @param cur_design  the design matrix
 #' @param cur_formula the design formula, including interactions
 #' @param num.cores number of cores if running in parallel.
 #' @param .parallel whether to run with multiple cores or not.
 #' @param stat.method Which statistical test to use, Wald, or LLT. Defaults to Wald.
-#' @param diff.method which method to use for effect size calculation . Defaults to "maximum"
+#' @param diff.method which method to use for effect size calculation. Defaults to "maximum"
 #' @keywords multiDiff
 #' @export
-#' @examples
-#' @calculateMultiDiffMeth()
 
 calculateMultiDiffMeth<- function(meth, cur_design, cur_formula ,
                                   num.cores=2, .parallel=T,
@@ -424,5 +423,9 @@ SLIMfunc<-function(rawp,STA=.1,Divi=10,Pz=0.05,B=100,Bplot=FALSE)
 
 f1<-function(cutoff,rawp){sum(rawp<cutoff)/length(rawp)};
 
+
+
 ilogit <- function(x) { return (1/(1+exp(-x))) }
-logic <-function(x){ return (log(x/(1-x)))}
+
+
+logit <-function(x){ return (log(x/(1-x)))}

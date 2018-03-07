@@ -10,7 +10,4 @@ License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
 Depends: ggplot2,devtools,plyr,reshape2,methylKit,DSS,Matrix,pheatmap,scales,emdbook,dplyr
-    
-   
-
-
+RoxygenNote: 6.0.1
