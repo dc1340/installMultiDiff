@@ -423,9 +423,14 @@ SLIMfunc<-function(rawp,STA=.1,Divi=10,Pz=0.05,B=100,Bplot=FALSE)
 
 f1<-function(cutoff,rawp){sum(rawp<cutoff)/length(rawp)};
 
-
-
+#' Inverse logit function
+#'
+#' Inverse of the logit link function.
+#' @export
 ilogit <- function(x) { return (1/(1+exp(-x))) }
 
-
+#' The logit function
+#'
+#' The logit link function.
+#' @export
 logit <-function(x){ return (log(x/(1-x)))}
