@@ -1,8 +1,11 @@
 #' Run methylation simulation
 #'
 #' Runs multivariate simulation of methylation for methylKit and DSS
+#' If both the DSS and confusion matrix flags are set to false,
+#' will return a standard multiDiff array. Otherwise will return a list of lists.
 #' @param sim_num_sites_per_cond Number of sites per condition. Default=1000
 #' @param sim_read_depth Read depth- simulated uniformly. Default=10
+#' @param sim_num_samps Number of samples for each of the four biological conditions. Default=4
 #' @param seed Random seed. Default=1
 #' @param sim_control_region_size_multiplier Allows the control region to be larger to
 #'     simulate that most of the genome should not be differential. Default=1
@@ -17,7 +20,7 @@
 #' @param inv_link_func The inverse link function. Expected to output in [0,1], should be inverse of the link.
 #' @param sim_cores Number of cores to use in the simulation
 run_meth_sim <-function ( sim_num_sites_per_cond=1000, sim_read_depth=10,
-              seed=1,
+                          sim_num_samps=4, seed=1,
               sim_control_region_size_multiplier=1,
               sim_use_sawtooth_base=F,
               sim_mean_beta=3, sim_beta_multiplier=c(1,-1,-1),
@@ -198,10 +201,18 @@ run_meth_sim <-function ( sim_num_sites_per_cond=1000, sim_read_depth=10,
                                       design=sim_diff_design,
                                       formula=~Cov1+Cov2+IsBoth)
   }
+
+  ##Same some memory here
   rm(sim_base_meth)
 
   # sim_sig_diff=apply(sim_diff[[2]][ , 1, ], 2, mean)
   # sim_sig_diff=sim_sig_diff/(sim_sig_diff[[1]])
+
+  if (run_DSS){
+
+  } else {
+
+  }
 
   ### Generate confusion matrices ####
   if (make_confusion_matrices){
@@ -224,18 +235,6 @@ run_meth_sim <-function ( sim_num_sites_per_cond=1000, sim_read_depth=10,
         sim_jm_confusion_matrix[ sim_bin_site_state[[i]], sim_jm_call_state[[i]]]+1
     }
 
-    ##Confusion for multiDSS
-    sim_multiDSS_diff_matrix=getMaxDiffFromMultiDSS(sim_multiDSS)
-    sim_multiDSS_diff_call=getMultiDSSDiffCall(sim_multiDSS)
-
-    sim_multiDSS_call_state=rowSums(matrix(as.numeric(sim_multiDSS_diff_call),
-                                           nrow=sim_num_sites) %*% diag(2^c(0:(ncol(sim_design)-1))))+1
-
-    sim_multiDSS_confusion_matrix=matrix(rep(0, 64), nrow=8, ncol=8)
-    for (i in 1:length(sim_bin_site_state)){
-      sim_multiDSS_confusion_matrix[ sim_bin_site_state[[i]], sim_multiDSS_call_state[[i]]]=
-        sim_multiDSS_confusion_matrix[ sim_bin_site_state[[i]], sim_multiDSS_call_state[[i]]]+1
-    }
 
     ##Confusion by q-value for multiDiff
 
@@ -247,28 +246,64 @@ run_meth_sim <-function ( sim_num_sites_per_cond=1000, sim_read_depth=10,
         sim_jm_q_confusion_matrix[ sim_bin_site_state[[i]], sim_jm_call_state[[i]]]+1
     }
 
+    colnames(sim_jm_confusion_matrix)=sim_bin_names
 
-    ##Confusion by q-value for DSS
+    if (run_DSS){
 
+      ##Confusion for multiDSS
+      sim_multiDSS_diff_matrix=getMaxDiffFromMultiDSS(sim_multiDSS)
+      sim_multiDSS_diff_call=getMultiDSSDiffCall(sim_multiDSS)
 
-    sim_multiDSS_diff_call=getMultiDSSDiffCall(sim_multiDSS, meth.thresh =0)
+      sim_multiDSS_call_state=rowSums(matrix(as.numeric(sim_multiDSS_diff_call),
+                                             nrow=sim_num_sites) %*% diag(2^c(0:(ncol(sim_design)-1))))+1
 
+      sim_multiDSS_confusion_matrix=matrix(rep(0, 64), nrow=8, ncol=8)
+      for (i in 1:length(sim_bin_site_state)){
+        sim_multiDSS_confusion_matrix[ sim_bin_site_state[[i]], sim_multiDSS_call_state[[i]]]=
+          sim_multiDSS_confusion_matrix[ sim_bin_site_state[[i]], sim_multiDSS_call_state[[i]]]+1
+      }
 
+      ##Confusion by q-value for DSS
+
+      sim_multiDSS_diff_call=getMultiDSSDiffCall(sim_multiDSS, meth.thresh =0)
     sim_multiDSS_q_confusion_matrix=matrix(rep(0, 64), nrow=8, ncol=8)
-    for (i in 1:length(sim_bin_site_state)){
-      sim_multiDSS_q_confusion_matrix[ sim_bin_site_state[[i]], sim_multiDSS_call_state[[i]]]=
-        sim_multiDSS_q_confusion_matrix[ sim_bin_site_state[[i]], sim_multiDSS_call_state[[i]]]+1
+      for (i in 1:length(sim_bin_site_state)){
+        sim_multiDSS_q_confusion_matrix[ sim_bin_site_state[[i]], sim_multiDSS_call_state[[i]]]=
+          sim_multiDSS_q_confusion_matrix[ sim_bin_site_state[[i]], sim_multiDSS_call_state[[i]]]+1
+      }
+
+      colnames(sim_multiDSS_confusion_matrix)=sim_bin_names
+      colnames(sim_multiDSS_q_confusion_matrix)=sim_bin_names
     }
 
 
-    # rownames(sim_dc_confusion_matrix)=sim_bin_names
-    # rownames(sim_jm_confusion_matrix)=sim_bin_names
-    colnames(sim_jm_confusion_matrix)=sim_bin_names
-    colnames(sim_multiDSS_confusion_matrix)=sim_bin_names
-    colnames(sim_multiDSS_q_confusion_matrix)=sim_bin_names
-
-    output=
   }
+
+  ### Generate output ####
+  if (run_DSS){
+    call_list=list(multiDiff=sim_jm_diff, DSS=sim_multiDSS)
+
+    if (make_confusion_matrices){
+      meth_confusion_list=list(multiDiff=sim_jm_diff,
+                               DSS=sim_multiDSS_confusion_matrix)
+      q_confusion_list=list(multiDiff=sim_jm_q_confusion_matrix,
+                            DSS=sim_multiDSS_confusion_matrix)
+      output=list(diffObjs=call_list, methConfusions=meth_confusions_list,
+                  qConfusions=q_confusion_list)
+    } else {
+      output=call_list
+    }
+  } else {
+
+    if (make_confusion_matrices){
+      output=list(diffObj=sim_jm_diff, methConfusion=sim_jm_confusion_matrix,
+                  qConfusion=sim_jm_q_confusion_matrix)
+    } else {
+      output=sim_jm_diff
+    }
+  }
+
+  ##Output ####
 
  return (output)
 }
