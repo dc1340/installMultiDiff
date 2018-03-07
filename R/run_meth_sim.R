@@ -24,14 +24,14 @@
 #' @export
 run_meth_sim <-function ( base_only=F, sim_num_sites_per_cond=1000, sim_read_depth=10,
                           sim_num_samps_per_group=4, seed=1,
-              sim_control_region_size_multiplier=1,
-              sim_use_sawtooth_base=F,
-              sim_mean_beta=3, sim_beta_multiplier=c(1,-1,-1),
-              sim_condition_noise=0.01,
-              sim_biological_noise=0.01,
-              run_DSS=T, make_confusion_matrices=T,
-              link_func=logit, inv_link_func=inv_link_func,
-              sim_cores=4){
+                          sim_control_region_size_multiplier=1,
+                          sim_use_sawtooth_base=F,
+                          sim_mean_beta=3, sim_beta_multiplier=c(1,-1,-1),
+                          sim_condition_noise=0.01,
+                          sim_biological_noise=0.01,
+                          run_DSS=T, make_confusion_matrices=T,
+                          link_func=logit, inv_link_func=ilogit,
+                          sim_cores=4){
 
 
   set.seed(seed)
@@ -275,7 +275,7 @@ run_meth_sim <-function ( base_only=F, sim_num_sites_per_cond=1000, sim_read_dep
       ##Confusion by q-value for DSS
 
       sim_multiDSS_diff_call=getMultiDSSDiffCall(sim_multiDSS, meth.thresh =0)
-    sim_multiDSS_q_confusion_matrix=matrix(rep(0, 64), nrow=8, ncol=8)
+      sim_multiDSS_q_confusion_matrix=matrix(rep(0, 64), nrow=8, ncol=8)
       for (i in 1:length(sim_bin_site_state)){
         sim_multiDSS_q_confusion_matrix[ sim_bin_site_state[[i]], sim_multiDSS_call_state[[i]]]=
           sim_multiDSS_q_confusion_matrix[ sim_bin_site_state[[i]], sim_multiDSS_call_state[[i]]]+1
@@ -314,7 +314,7 @@ run_meth_sim <-function ( base_only=F, sim_num_sites_per_cond=1000, sim_read_dep
 
   ##Output ####
 
- return (output)
+  return (output)
 }
 
 #cat('Input: ', sim_beta_multiplier, '\n', 'Output 1: ', sim_sig_diff, '\n', 'Output 2: ', sim_sig_dc, '\n')
