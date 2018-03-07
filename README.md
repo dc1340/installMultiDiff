@@ -14,6 +14,6 @@ You can install multiDiff from github:
 
 ```
 library(devtools)
-install_github(dc1340/installMultiDiff", build_vignettes=FALSE,
+install_github("dc1340/installMultiDiff", build_vignettes=FALSE,
   dependencies=TRUE)
 ```
