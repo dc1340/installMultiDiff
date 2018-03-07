@@ -4,19 +4,23 @@
 \alias{run_meth_sim}
 \title{Run methylation simulation}
 \usage{
-run_meth_sim(sim_num_sites_per_cond = 1000, sim_read_depth = 10,
-  sim_num_samps = 4, seed = 1, sim_control_region_size_multiplier = 1,
-  sim_use_sawtooth_base = F, sim_mean_beta = 3, sim_beta_multiplier = c(1,
-  -1, -1), sim_condition_noise = 0.01, sim_biological_noise = 0.01,
-  run_DSS = T, make_confusion_matrices = T, link_func = logit,
-  inv_link_func = inv_link_func, sim_cores = 4)
+run_meth_sim(base_only = F, sim_num_sites_per_cond = 1000,
+  sim_read_depth = 10, sim_num_samps_per_group = 4, seed = 1,
+  sim_control_region_size_multiplier = 1, sim_use_sawtooth_base = F,
+  sim_mean_beta = 3, sim_beta_multiplier = c(1, -1, -1),
+  sim_condition_noise = 0.01, sim_biological_noise = 0.01, run_DSS = T,
+  make_confusion_matrices = T, link_func = logit, inv_link_func = ilogit,
+  sim_cores = 4)
 }
 \arguments{
+\item{base_only}{Whether to generate multDiff and DSS call objects. Will only
+return a methylBase object if set to true. Default=F}
+
 \item{sim_num_sites_per_cond}{Number of sites per condition. Default=1000}
 
 \item{sim_read_depth}{Read depth- simulated uniformly. Default=10}
 
-\item{sim_num_samps}{Number of samples for each of the four biological conditions. Default=4}
+\item{sim_num_samps_per_group}{Number of samples for each of the four biological conditions. Default=4}
 
 \item{seed}{Random seed. Default=1}
 

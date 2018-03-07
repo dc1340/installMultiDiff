@@ -22,7 +22,7 @@ install_github("dc1340/installMultiDiff", build_vignettes=FALSE,
   dependencies=TRUE)
 ```
 
-#Test
+# Test
 
 You can run a quick test of the simulation and visualization with:
 
